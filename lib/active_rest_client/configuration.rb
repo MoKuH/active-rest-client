@@ -91,7 +91,7 @@ module ActiveRestClient
       end
 
       def adapter
-        @adapter ||= :patron
+        @adapter ||= :net_http
       end
 
       def faraday_config(&block)
@@ -162,7 +162,7 @@ module ActiveRestClient
         @whiny_missing        = nil
         @lazy_load            = false
         @faraday_config       = default_faraday_config
-        @adapter              = :patron
+        @adapter              = :net_http
         @@api_auth_access_id  = nil
         @@api_auth_secret_key = nil
       end
