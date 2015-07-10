@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_rest_client/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "active_rest_client_jruby"
+  spec.name          = "active_rest_client"
   spec.version       = ActiveRestClient::VERSION
   spec.platform      = Gem::Platform::RUBY
   spec.authors       = ["Which Ltd", "Andy Jeffries"]
