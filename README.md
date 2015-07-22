@@ -7,12 +7,21 @@
 
 This gem is for accessing REST services in an ActiveRecord style.  ActiveResource already exists for this, but it doesn't work where the resource naming doesn't follow Rails conventions, it doesn't have in-built caching and it's not as flexible in general.
 
+
+##FORK
+
+This gem is a fork of  [active_rest_client](https://github.com/whichdigital/active-rest-client)
+It allows the Jruby support, and add URL encoding for friendly url api call
+
+NB : patron http adapter has been remove due to the Jruby compatibility, by default, :net_http is used
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_rest_client_jruby'
+gem 'active_rest_client'
 ```
 
 And then execute:
@@ -121,6 +130,23 @@ puts @person.to_json
 
 ## Advanced Features
 
+### Faraday Configuration
+
+ActiveRestClient uses Faraday to allow switching HTTP backends, the default is net_http. To change the used backend just set it in the class by setting `adapter` to a Faraday supported adapter symbol.
+
+```ruby
+ActiveRestClient::Base.adapter = :net_http
+```
+
+If you want more control you can pass a complete configuration block. For available config variables look into the Faraday documentation.
+
+```ruby
+ActiveRestClient::Base.faraday_config do |faraday|
+faraday.adapter(:net_http)
+faraday.options.timeout       = 10
+faraday.headers['User-Agent'] = "ActiveRestClient/#{ActiveRestClient::VERSION}"
+end
+  ````
 ### Associations
 
 There are two types of association.  One assumes when you call a method you actually want it to call the method on a separate class (as that class has other methods that are useful).  The other is lazy loading related classes from a separate URL.
