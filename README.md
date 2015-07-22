@@ -13,7 +13,7 @@ This gem is for accessing REST services in an ActiveRecord style.  ActiveResourc
 This gem is a fork of  [active_rest_client](https://github.com/whichdigital/active-rest-client)
 It allows the Jruby support, and add URL encoding for friendly url api call
 
-NB : patron http adapter has been remove due to the Jruby compatibility, by default, :net_http is used
+NB : patron http adapter has been removed due to the Jruby compatibility, by default, :net_http is used
 
 
 ## Installation
