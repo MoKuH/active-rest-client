@@ -1,5 +1,4 @@
 require 'cgi'
-require 'faraday/adapter/manticore'
 
 module ActiveRestClient
   module Configuration
@@ -93,10 +92,6 @@ module ActiveRestClient
 
       def adapter
         @adapter ||= :net_http
-        if RUBY_PLATFORM == 'java'
-          @adapter ||= :manticore
-        end
-
       end
 
       def faraday_config(&block)
