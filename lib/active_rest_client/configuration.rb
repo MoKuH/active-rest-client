@@ -93,7 +93,10 @@ module ActiveRestClient
 
       def adapter
         @adapter ||= :net_http
-        @adapter ||= :manticore
+        if RUBY_PLATFORM == 'java'
+          @adapter ||= :manticore
+        end
+
       end
 
       def faraday_config(&block)
