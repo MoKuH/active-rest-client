@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "faraday"
   if RUBY_PLATFORM == 'java'
-    spec.platform = RUBY_PLATFORM
+    #spec.platform = RUBY_PLATFORM
     spec.add_runtime_dependency "manticore", '~> 0.5.5'
   end
 
