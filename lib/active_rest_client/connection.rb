@@ -21,8 +21,15 @@ module ActiveRestClient
       @session.headers
     end
 
+    def self.timeout=value
+      Thread.current[:_timeout]=value
+    end
+    def self.timeout
+      Thread.current[:_timeout]
+    end
+
     def make_safe_request(path, &block)
-      @session.options.timeout=ActiveRestClient::ConnectionManager.timeout
+      @session.options.timeout=ActiveRestClient::Connection.timeout
       block.call
     rescue Faraday::Error::TimeoutError
       raise ActiveRestClient::TimeoutException.new("Timed out getting #{full_url(path)}")

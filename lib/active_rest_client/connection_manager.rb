@@ -5,9 +5,7 @@ module ActiveRestClient
       Thread.current[:_connections]={}
     end
 
-    def self.timeout=value
-      Thread.current[:_timeout]=value
-    end
+
 
     def self.get_connection(base_url)
       raise Exception.new("Nil base URL passed to ConnectionManager.get_connection") if base_url.nil?
