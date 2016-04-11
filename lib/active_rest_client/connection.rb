@@ -6,15 +6,20 @@ module ActiveRestClient
   class ConnectionFailedException < StandardError ; end
 
   class Connection
-    attr_accessor :session, :base_url
+    attr_accessor :session, :base_url,:timeout
 
-    def initialize(base_url)
+    def initialize(base_url,timeout=nil)
       @base_url                      = base_url
       @session                       = new_session
+      @timeout                       = timeout if timeout.present?
+      @session.options.timeout=@timeout if @timeout.present?
+
     end
 
     def reconnect
       @session         = new_session
+      @session.options.timeout=@timeout if @timeout.present?
+
     end
 
     def headers
@@ -35,6 +40,7 @@ module ActiveRestClient
     end
 
     def get(path, headers={})
+
       make_safe_request(path) do
         @session.get(path) do |req|
           req.headers = req.headers.merge(headers)
@@ -85,9 +91,9 @@ module ActiveRestClient
     def sign_request(request)
       return if !ActiveRestClient::Base.using_api_auth?
       ApiAuth.sign!(
-        request,
-        ActiveRestClient::Base.api_auth_access_id,
-        ActiveRestClient::Base.api_auth_secret_key)
+          request,
+          ActiveRestClient::Base.api_auth_access_id,
+          ActiveRestClient::Base.api_auth_secret_key)
     end
   end
 end
