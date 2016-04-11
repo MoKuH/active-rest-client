@@ -6,20 +6,15 @@ module ActiveRestClient
   class ConnectionFailedException < StandardError ; end
 
   class Connection
-    attr_accessor :session, :base_url,:timeout
+    attr_accessor :session, :base_url
 
-    def initialize(base_url,timeout=nil)
+    def initialize(base_url)
       @base_url                      = base_url
       @session                       = new_session
-      @timeout                       = timeout if timeout.present?
-      @session.options.timeout=@timeout if @timeout.present?
-
     end
 
     def reconnect
       @session         = new_session
-      @session.options.timeout=@timeout if @timeout.present?
-
     end
 
     def headers
@@ -27,6 +22,7 @@ module ActiveRestClient
     end
 
     def make_safe_request(path, &block)
+      @session.options.timeout=ActiveRestClient::ConnectionManager.timeout
       block.call
     rescue Faraday::Error::TimeoutError
       raise ActiveRestClient::TimeoutException.new("Timed out getting #{full_url(path)}")
