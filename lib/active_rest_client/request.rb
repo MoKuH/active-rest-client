@@ -4,7 +4,7 @@ require "multi_json"
 module ActiveRestClient
 
   class Request
-    attr_accessor :post_params, :get_params, :url, :path, :headers, :method, :object, :body, :forced_url, :original_url
+    attr_accessor :post_params, :get_params, :url, :path, :headers, :method, :object, :body, :forced_url, :original_url,:original_params
 
     def initialize(method, object, params = {})
       @method                     = method
@@ -15,6 +15,7 @@ module ActiveRestClient
       @object                     = object
       @response_delegate          = ActiveRestClient::RequestDelegator.new(nil)
       @params                     = params
+      @original_params            ||= {}
       @headers                    = HeadersList.new
     end
 
@@ -138,13 +139,13 @@ module ActiveRestClient
         end
 
         response = (
-          if proxy
-            proxy.handle(self) do |request|
-              request.do_request(etag)
-            end
-          else
-            do_request(etag)
+        if proxy
+          proxy.handle(self) do |request|
+            request.do_request(etag)
           end
+        else
+          do_request(etag)
+        end
         )
 
         # This block is called immediately when this request is not inside a parallel request block.
@@ -211,6 +212,7 @@ module ActiveRestClient
         matches.each do |token|
           token = token.first[1,999]
           target = @get_params.delete(token.to_sym) || @post_params.delete(token.to_sym) || @get_params.delete(token.to_s) || @post_params.delete(token.to_s) || ""
+          @original_params[token.to_sym]=target
           @url.gsub!(":#{token}", CGI.escape(target.to_s))
         end
       end
@@ -281,16 +283,16 @@ module ActiveRestClient
       end
 
       case http_method
-      when :get
-        response = connection.get(@url, http_headers)
-      when :put
-        response = connection.put(@url, @body, http_headers)
-      when :post
-        response = connection.post(@url, @body, http_headers)
-      when :delete
-        response = connection.delete(@url, http_headers)
-      else
-        raise InvalidRequestException.new("Invalid method #{http_method}")
+        when :get
+          response = connection.get(@url, http_headers)
+        when :put
+          response = connection.put(@url, @body, http_headers)
+        when :post
+          response = connection.post(@url, @body, http_headers)
+        when :delete
+          response = connection.delete(@url, http_headers)
+        else
+          raise InvalidRequestException.new("Invalid method #{http_method}")
       end
 
       response
@@ -315,7 +317,7 @@ module ActiveRestClient
 
       if cached && response.status == 304
         ActiveRestClient::Logger.debug "  \033[1;4;32m#{ActiveRestClient::NAME}\033[0m #{@instrumentation_name}" +
-          ' - Etag copy is the same as the server'
+                                           ' - Etag copy is the same as the server'
         return handle_cached_response(cached)
       end
 
