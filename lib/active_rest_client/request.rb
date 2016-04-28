@@ -403,7 +403,14 @@ module ActiveRestClient
       end
       object.clean! unless object_is_class?
 
+      if @overriden_name.present?
+        object=@overriden_name.new object
+      else
+        object
+      end
       object
+
+
     end
 
     def hal_response?
